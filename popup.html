@@ -1,16 +1,21 @@
 <html>
 <head>
-    <script type="text/javascript" charset="utf-8" src="jquery-2.1.3.min.js"></script>
-    <script type="text/javascript" src="spark.js"></script>
-    <script src="popup.js"></script>
+    <script type="text/javascript" charset="utf-8" src="lib/jquery-2.1.3.min.js"></script>
+    <script type="text/javascript" src="lib/spark.js"></script>
+    <script type="text/javascript" src="lib/three.r73.min.js"></script>
+    <script type="text/javascript" src="lib/orbitControls.js"></script>
+    <script type="text/javascript" src="lib/viewer.js"></script>
+    <script type="text/javascript" src="lib/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/popup.js"></script>
 
-    <link href="common.css" rel="stylesheet">
+    <link href="styles/common.css" rel="stylesheet">
+    <link href="lib/styles/bootstrap.min.css" rel="stylesheet">
 
 </head>
 <body>
-<a id="3d-print-extension-login" class="spark_btn primary">Login to Get an Access Token (Implicit)</a>
+<!--<a id="3d-print-extension-login" class="spark_btn primary">Login to Get an Access Token (Implicit)</a>-->
 <div class="target"></div>
-<!--<button id="3d-print-extension-login">Let's Go!</button>-->
+<button id="3d-print-extension-login">Let's Go!</button>
 <div id="content"></div>
 </body>
 </html>

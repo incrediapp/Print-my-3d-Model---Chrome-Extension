@@ -1,7 +1,3 @@
-//chrome.runtime.onInstalled.addListener(function() {
-//
-//});
-
 var objs = [];
 
 var checkRequest = function (details) {
@@ -10,16 +6,6 @@ var checkRequest = function (details) {
 		objs.push(details.url);
 		//chrome.storage.local.set({'objs': objs});
 		chrome.browserAction.setBadgeText({text: '' + objs.length});
-		//appAPI.browserAction.onClick(function () {
-		//	//e.g. Open a page in a new tab
-		//	//cg3MIUMP6iAXpH6k
-		//	//$.ajax({
-		//	//	url: "",
-		//	//	success: function (data) {
-		//	//		appAPI.openURL(data, "tab");
-		//	//	}
-		//	//});
-		//});
 	}
 };
 

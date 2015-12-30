@@ -5,12 +5,12 @@
   "description": "Allows users to 3d print models they are currently viewing by sending them to service bureaus, using Spark Service Bureau API",
   "version": "1.0",
   "background": {
-    "scripts": ["background.js"],
+    "scripts": ["js/background.js"],
     "persistent": true
   },
 
   "browser_action": {
-    "default_icon": "ember.png"
+    "default_icon": "images/ember.png"
 //    "default_popup": "popup.html"
   },
   "permissions": [

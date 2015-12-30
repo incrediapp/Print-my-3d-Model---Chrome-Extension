@@ -17,6 +17,10 @@ chrome.runtime.sendMessage({'gimme': 'gimme!'}, function (response) {
     // Initialize Spark client
     ADSKSpark.Client.initialize('XIRIrrHQohEfLVtPgwH75zotoGzGuwBU');
 
+    //if (ADSKSpark.Client.isAccessTokenValid()) {
+    //    console.debug('Access token is still valid!');
+    //}
+
     var splitParts = window.location.toString().split('access_token=');
     if (splitParts && splitParts.length > 1) {
         accessToken = splitParts[1];
@@ -39,7 +43,7 @@ chrome.runtime.sendMessage({'gimme': 'gimme!'}, function (response) {
                 request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
             },
-            data: "public=true&filename=filename.obj&fileurl=" + encodeURIComponent(objs[0]),
+            data: "filename=filename.obj&fileurl=" + encodeURIComponent(objs[0]),
             url: "https://api-sandbox.spark.autodesk.com/api/v1/files/upload",
             success: function(result) {
                 console.log(result);
