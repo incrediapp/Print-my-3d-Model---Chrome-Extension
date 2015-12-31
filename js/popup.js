@@ -1,6 +1,52 @@
 //.3ds, .stl, .igs, .model, .mxp, .obj, .wrl, .zip, .rar, .7z, .skp, .dae, .fbx, .matPart, .ply, .magics, .mgx, .x3d, .x3dv.", fields))
 var accessToken = '';
 var objs = [];
+
+var startUploadingFilesToSpark = function () {
+    if (!$("input:checked").val()) {
+        toastr.error('Please select 1 of the files');
+        return;
+    }
+
+    $("#3d-print-extension-login").hide();
+    $(".target").hide();
+    $("#content").html("Please wait while we redirect you to Autodesk's Marketplace Service Bureau page... This will take a few seconds, depending on the size of the model.");
+
+    //Upload file and onSuccess call the service bureau api
+    $.ajax({
+
+        type: "POST",
+        beforeSend: function (request) {
+            request.setRequestHeader("Authorization", "Bearer " + accessToken);
+            request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+        },
+        data: "filename=filename.obj&fileurl=" + encodeURIComponent($("input:checked").val()),
+        url: "https://api-sandbox.spark.autodesk.com/api/v1/files/upload",
+        success: function (result) {
+            console.log(result);
+            callServiceBureauApi(result);
+        },
+        failure: function (result) {
+            console.log(result);
+        }
+    });
+}
+
+if (ADSKSpark.Client.isAccessTokenValid()) {
+    accessToken = ADSKSpark.Client.getAccessToken();
+} else {
+    ADSKSpark.Client.completeLogin(false).then(function (token) {
+        // Get the access_token
+        if (token) {
+            accessToken = token;
+            startUploadingFilesToSpark();
+        } else {
+            console.error('Problem with fetching token');
+        }
+    })
+};
+
 chrome.runtime.sendMessage({'gimme': 'gimme!'}, function (response) {
     console.log('Received URLS');
     fileUrls = response.takeit;
@@ -8,57 +54,25 @@ chrome.runtime.sendMessage({'gimme': 'gimme!'}, function (response) {
     objs = fileUrls;
 
     for (i = 0; i < objs.length; i++) {
-        var radioBtn = $('<input type="radio" name="url" value="' + objs[i] + '"/>');
+        var viewerDiv = $('<div id="viewer-placeholder-' + i + '"/>');
+        var radioBtn = $('<input type="radio" id="radio-' + i + '" name="url" value="' + objs[i] + '">  ' + objs[i] + '</input>');
         radioBtn.appendTo('.target');
+        viewerDiv.appendTo('.target');
+        console.log(objs[i]);
+        createNewViewer(viewerDiv, objs[i]);
     }
+
+    //if ($("#radio-0")) {
+    //    // Check the first option
+    //    $("#radio-0").prop("checked", true);
+    //}
 
     var fileUrls = [];
 
     // Initialize Spark client
     ADSKSpark.Client.initialize('XIRIrrHQohEfLVtPgwH75zotoGzGuwBU');
 
-    //if (ADSKSpark.Client.isAccessTokenValid()) {
-    //    console.debug('Access token is still valid!');
-    //}
-
-    var splitParts = window.location.toString().split('access_token=');
-    if (splitParts && splitParts.length > 1) {
-        accessToken = splitParts[1];
-        $("#3d-print-extension-login").hide();
-        $("#content").html("Please wait while we redirect you to Autodesk's Marketplace Service Bureau page... This will take a few seconds, depending on the size of the model.");
-
-        //Upload file and onSuccess call the service bureau api
-
-        chrome.storage.local.get('objs', function (result){
-            objs = result.objs;
-        });
-
-        console.log('Uploading file. objs: ' + objs + (!objs || objs.length < 1) ? ' ************** NO OBJS!!!!!!!!' : '');
-        $.ajax({
-
-            type:"POST",
-            beforeSend: function (request)
-            {
-                request.setRequestHeader("Authorization", "Bearer " + accessToken);
-                request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-            },
-            data: "filename=filename.obj&fileurl=" + encodeURIComponent(objs[0]),
-            url: "https://api-sandbox.spark.autodesk.com/api/v1/files/upload",
-            success: function(result) {
-                console.log(result);
-                callServiceBureauApi(result);
-            },
-            failure: function (result) {
-                console.log(result);
-            }
-        });
-    }
-
 });
-
-//chrome.storage.local.get('objs', function (result){
-//});
 
 document.addEventListener('DOMContentLoaded', function() {
     var link = document.getElementById('3d-print-extension-login');
@@ -72,36 +86,11 @@ document.addEventListener('DOMContentLoaded', function() {
  * Open login window
  */
 function login() {
-    location.href = ADSKSpark.Client.getLoginRedirectUrl();
-}
-
-/**
- * Logout button function
- */
-function logout() {
-    ADSKSpark.Client.logout();
-    location.href = location.protocol + '//' + location.host + location.pathname;
-}
-
-
-// Checks on load/reload if the Access_token exist at the local storage.
-if (ADSKSpark.Client.isAccessTokenValid()) {
-    $('#access-token-span').text(ADSKSpark.Client.getAccessToken());
-    $('#login').hide();
-    $('#logout').css('display', 'inline-block');
-}else{
-    /**
-     * Complete the login flow after the redirect from Authentication.
-     */
-    ADSKSpark.Client.completeLogin(false).then(function (token) {
-        // Get the access_token
-        if (token) {
-            location.href = location.protocol + '//' + location.host + location.pathname;
-        } else {
-            console.error('Problem with fetching token');
-        }
-
-    });
+    if (accessToken) {
+        startUploadingFilesToSpark();
+    } else {
+        location.href = ADSKSpark.Client.getLoginRedirectUrl();
+    }
 }
 
 var callServiceBureauApi = function (result) {
@@ -119,7 +108,7 @@ var callServiceBureauApi = function (result) {
         },
         url: "https://api-sandbox.spark.autodesk.com/api/v1/assets/viewerUrl" +
         "?file_ids=" + fileIds.join(",") +
-        "&asset_name=CreatedByPrintMy3dModelBrowserExtension" +
+        "&asset_name=My Model" +
         "&description=Created by Print My 3d Model browser extension" +
         "&tags=3d",
         success: function(result) {
@@ -130,5 +119,4 @@ var callServiceBureauApi = function (result) {
             console.log(result);
         }
     });
-
 };
