@@ -54,9 +54,11 @@ chrome.runtime.sendMessage({'gimme': 'gimme!'}, function (response) {
 
     for (i = 0; i < objs.length; i++) {
         var viewerDiv = $('<div id="viewer-placeholder-' + i + '"/>');
+        var newLine = $('<br/>');
         var radioBtn = $('<input type="radio" id="radio-' + i + '" name="url" value="' + objs[i] + '">  ' + objs[i] + '</input>');
         radioBtn.appendTo('.target');
         viewerDiv.appendTo('.target');
+        newLine.appendTo('.target');
         createNewViewer(viewerDiv, objs[i]);
     }
 
