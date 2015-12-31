@@ -1,4 +1,3 @@
-//.3ds, .stl, .igs, .model, .mxp, .obj, .wrl, .zip, .rar, .7z, .skp, .dae, .fbx, .matPart, .ply, .magics, .mgx, .x3d, .x3dv.", fields))
 var accessToken = '';
 var objs = [];
 
@@ -58,7 +57,6 @@ chrome.runtime.sendMessage({'gimme': 'gimme!'}, function (response) {
         var radioBtn = $('<input type="radio" id="radio-' + i + '" name="url" value="' + objs[i] + '">  ' + objs[i] + '</input>');
         radioBtn.appendTo('.target');
         viewerDiv.appendTo('.target');
-        console.log(objs[i]);
         createNewViewer(viewerDiv, objs[i]);
     }
 

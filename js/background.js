@@ -1,6 +1,6 @@
 var objs = [];
 
-var blacklist = ['google-analytics.com/', 'marketplace.autodesk.com', 'AKIAJKBLD5HRBQ557RSA'];
+var blacklist = ['google-analytics.com/', 'marketplace.autodesk.com', 'AKIAJKBLD5HRBQ557RSA', 'www.google.com/search?q'];
 
 if(!Array.prototype.indexOf) {
 	Array.prototype.indexOf = function(needle) {
@@ -15,7 +15,6 @@ if(!Array.prototype.indexOf) {
 
 var checkRequest = function (details) {
 	if (details.url.indexOf('.obj') !== -1 || details.url.indexOf('.stl') !== -1) {
-		console.log("FOUND OBJ or STL! " + details.url);
 		var blacklisted = false;
 		if (objs.indexOf(details.url) === -1) {
 			for (var i=0; i < blacklist.length; i++) {
